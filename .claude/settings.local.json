@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_figma_figma__whoami",
+      "Bash(claude mcp *)",
+      "Bash(curl *)",
+      "mcp__plugin_figma_figma__get_screenshot",
+      "mcp__plugin_figma_figma__get_design_context",
+      "Bash(npm create *)",
+      "Bash(npm --version)",
+      "Bash(git *)"
+    ]
+  }
+}
