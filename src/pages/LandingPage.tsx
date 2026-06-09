@@ -42,7 +42,7 @@ const LandingPage = () => {
   };
 
   return (
-    <Container size="lg" h="100vh" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Container size="lg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100%', paddingTop: 40, paddingBottom: 40 }}>
       <Stack align="center" gap="xl" w="100%" maw={800}>
         <Stack align="center" gap="sm">
           <Title order={1} size="h2">
