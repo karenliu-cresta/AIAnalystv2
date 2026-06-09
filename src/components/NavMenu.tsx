@@ -1,202 +1,171 @@
-import { Stack, Button, Text, Collapse, Box } from '@mantine/core';
-import { useState } from 'react';
+import { Box, Stack, UnstyledButton, Text, Collapse } from '@mantine/core';
 import {
   IconChartLine,
-  IconChevronDown,
-  IconChevronLeft,
   IconListSearch,
   IconMessage2,
   IconRobot,
-  IconAperture,
   IconUsers,
   IconReportAnalytics,
   IconShieldLock,
   IconTool,
+  IconChevronDown,
+  IconChevronLeft,
+  IconCircleSquare,
 } from '@tabler/icons-react';
+import { useState } from 'react';
 
-interface NavMenuItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  children?: { label: string; path: string }[];
-}
-
-const menuItems: NavMenuItem[] = [
+const navSections = [
   {
     id: 'insights',
     label: 'Insights',
-    icon: <IconChartLine size={16} />,
-    children: [
-      { label: 'Performance', path: '/performance' },
-      { label: 'Assistance', path: '/assistance' },
-      { label: 'Leaderboard', path: '/leaderboard' },
-      { label: 'Dashboard Builder', path: '/dashboard-builder' },
-      { label: 'AI Analyst', path: '/ai-analyst' },
-      { label: 'Outcome Insights', path: '/outcome-insights' },
+    icon: IconChartLine,
+    items: [
+      'Performance',
+      'Assistance',
+      'Leaderboard',
+      'Dashboard Builder',
+      'AI Analyst',
+      'Outcome Insights',
     ],
+    defaultOpen: true,
   },
-  {
-    id: 'discovery',
-    label: 'Discovery',
-    icon: <IconListSearch size={16} />,
-  },
-  {
-    id: 'conversations',
-    label: 'Conversations',
-    icon: <IconMessage2 size={16} />,
-  },
-  {
-    id: 'ai-agent',
-    label: 'AI Agent',
-    icon: <IconRobot size={16} />,
-  },
-  {
-    id: 'opera',
-    label: 'Opera',
-    icon: <IconAperture size={16} />,
-  },
-  {
-    id: 'coaching',
-    label: 'Coaching',
-    icon: <IconUsers size={16} />,
-  },
-  {
-    id: 'qm',
-    label: 'QM',
-    icon: <IconReportAnalytics size={16} />,
-  },
-  {
-    id: 'admin',
-    label: 'Admin',
-    icon: <IconShieldLock size={16} />,
-  },
-  {
-    id: 'system-config',
-    label: 'System Config',
-    icon: <IconTool size={16} />,
-  },
+  { id: 'discovery', label: 'Discovery', icon: IconListSearch, items: [] },
+  { id: 'conversations', label: 'Conversations', icon: IconMessage2, items: [] },
+  { id: 'ai-agent', label: 'AI Agent', icon: IconRobot, items: [] },
+  { id: 'opera', label: 'Opera', icon: IconCircleSquare, items: [] },
+  { id: 'coaching', label: 'Coaching', icon: IconUsers, items: [] },
+  { id: 'qm', label: 'QM', icon: IconReportAnalytics, items: [] },
+  { id: 'admin', label: 'Admin', icon: IconShieldLock, items: [] },
+  { id: 'system-config', label: 'System Config', icon: IconTool, items: [] },
 ];
 
 const NavMenu = () => {
-  const [expanded, setExpanded] = useState(true);
-  const [openItem, setOpenItem] = useState<string>('insights');
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    insights: true,
+  });
+  const [activeItem, setActiveItem] = useState('AI Analyst');
 
-  const toggleItem = (id: string) => {
-    setOpenItem(openItem === id ? '' : id);
+  const toggleSection = (id: string) => {
+    setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <Stack
-      gap={0}
+    <Box
       style={{
-        width: expanded ? 250 : 60,
-        height: '100vh',
-        backgroundColor: '#f8f9fa',
-        borderRight: '1px solid #e9ecef',
-        transition: 'width 0.2s',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       {/* Logo */}
-      <Box p="md" style={{ borderBottom: '1px solid #e9ecef', height: 52 }}>
-        {expanded && (
-          <Text size="lg" fw={700}>
-            CRESTA
-          </Text>
-        )}
+      <Box
+        style={{
+          height: 52,
+          padding: '4px 16px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Text size="sm" fw={700} c="#25252a" style={{ letterSpacing: '0.1em' }}>
+          CRESTA
+        </Text>
       </Box>
 
-      {/* Menu Items */}
-      <Stack gap={0} style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
-        {menuItems.map((item) => (
-          <Box key={item.id}>
-            <Button
-              variant="subtle"
-              color="gray"
-              fullWidth
-              justify="flex-start"
-              leftSection={item.icon}
-              rightSection={
-                item.children && expanded ? (
+      {/* Navigation Items */}
+      <Box
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '6px 0',
+        }}
+      >
+        <Stack gap={0}>
+          {navSections.map((section) => (
+            <Box key={section.id}>
+              {/* Section Header */}
+              <UnstyledButton
+                onClick={() => section.items.length > 0 && toggleSection(section.id)}
+                style={{
+                  width: '100%',
+                  padding: '8px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  cursor: section.items.length > 0 ? 'pointer' : 'default',
+                }}
+              >
+                {section.icon && <section.icon size={16} color="#5d666f" />}
+                <Text
+                  size="xs"
+                  fw={600}
+                  c="#5d666f"
+                  style={{ flex: 1, textTransform: 'uppercase', letterSpacing: '0.5px' }}
+                >
+                  {section.label}
+                </Text>
+                {section.items.length > 0 && (
                   <IconChevronDown
                     size={14}
+                    color="#5d666f"
                     style={{
-                      transform: openItem === item.id ? 'rotate(180deg)' : 'none',
+                      transform: openSections[section.id] ? 'rotate(180deg)' : 'rotate(0deg)',
                       transition: 'transform 0.2s',
                     }}
                   />
-                ) : null
-              }
-              onClick={() => item.children && toggleItem(item.id)}
-              styles={{
-                root: {
-                  height: 38,
-                  padding: expanded ? '0 16px' : '0 8px',
-                },
-                label: {
-                  fontSize: '14px',
-                },
-                section: {
-                  marginRight: expanded ? 8 : 0,
-                },
-              }}
-            >
-              {expanded && item.label}
-            </Button>
+                )}
+              </UnstyledButton>
 
-            {item.children && expanded && (
-              <Collapse in={openItem === item.id}>
-                <Stack gap={0} pl="md">
-                  {item.children.map((child) => (
-                    <Button
-                      key={child.path}
-                      variant="subtle"
-                      color="gray"
-                      fullWidth
-                      justify="flex-start"
-                      styles={{
-                        root: {
-                          height: 34,
-                          padding: '0 12px',
-                          fontWeight: child.label === 'AI Analyst' ? 600 : 400,
-                        },
-                        label: {
-                          fontSize: '14px',
-                        },
-                      }}
-                    >
-                      {child.label}
-                    </Button>
-                  ))}
-                </Stack>
-              </Collapse>
-            )}
-          </Box>
-        ))}
-      </Stack>
+              {/* Section Items */}
+              {section.items.length > 0 && (
+                <Collapse in={openSections[section.id]}>
+                  <Stack gap={4} style={{ paddingLeft: 40, paddingBottom: 24 }}>
+                    {section.items.map((item) => (
+                      <UnstyledButton
+                        key={item}
+                        onClick={() => setActiveItem(item)}
+                        style={{
+                          padding: '6px 12px',
+                          borderRadius: 12,
+                          backgroundColor: activeItem === item ? '#fff' : 'transparent',
+                          boxShadow:
+                            activeItem === item ? '0px 4px 9px rgba(0, 0, 0, 0.05)' : 'none',
+                        }}
+                      >
+                        <Text
+                          size="sm"
+                          fw={500}
+                          c={activeItem === item ? '#25252a' : '#5d666f'}
+                        >
+                          {item}
+                        </Text>
+                      </UnstyledButton>
+                    ))}
+                  </Stack>
+                </Collapse>
+              )}
+            </Box>
+          ))}
+        </Stack>
+      </Box>
 
-      {/* Toggle Button */}
-      <Box p="sm" style={{ borderTop: '1px solid #e9ecef' }}>
-        <Button
-          variant="subtle"
-          color="gray"
-          fullWidth
-          onClick={() => setExpanded(!expanded)}
-          styles={{
-            root: {
-              height: 32,
-            },
+      {/* Collapse Button */}
+      <Box
+        style={{
+          height: 60,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <UnstyledButton
+          style={{
+            padding: '8px',
           }}
         >
-          <IconChevronLeft
-            size={18}
-            style={{
-              transform: expanded ? 'none' : 'rotate(180deg)',
-              transition: 'transform 0.2s',
-            }}
-          />
-        </Button>
+          <IconChevronLeft size={18} color="#5d666f" />
+        </UnstyledButton>
       </Box>
-    </Stack>
+    </Box>
   );
 };
 
