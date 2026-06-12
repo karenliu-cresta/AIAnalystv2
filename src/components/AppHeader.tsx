@@ -1,4 +1,4 @@
-import { Group, TextInput, Button, Avatar, Text, Box, Menu, ActionIcon } from '@mantine/core';
+import { Group, TextInput, Button, Avatar, Text, Box, Menu, ActionIcon, Tooltip } from '@mantine/core';
 import {
   IconBriefcase,
   IconChevronDown,
@@ -7,8 +7,10 @@ import {
   IconBell,
   IconCommand,
 } from '@tabler/icons-react';
+import { useAnalystStore } from '../store/useAnalystStore';
 
 const AppHeader = () => {
+  const sessionTitle = useAnalystStore((s) => s.sessionTitle);
   return (
     <Box
       style={{
@@ -21,34 +23,51 @@ const AppHeader = () => {
       }}
     >
       {/* Left side - Use case selector and breadcrumbs */}
-      <Group gap="md">
+      <Group gap="md" style={{ flex: 1, minWidth: 0 }}>
         <Menu shadow="md" width={200}>
           <Menu.Target>
-            <Button
-              variant="subtle"
-              color="gray"
-              leftSection={<IconBriefcase size={16} />}
-              rightSection={<IconChevronDown size={12} />}
+            <Tooltip
+              label="Data on this page works for all use-cases by default."
+              position="bottom-start"
+              withArrow={false}
+              multiline
+              w={240}
               styles={{
-                root: {
-                  height: 34,
-                  paddingLeft: 6,
-                  paddingRight: 6,
-                },
-                label: {
+                tooltip: {
+                  backgroundColor: '#25252a',
                   fontSize: '14px',
-                  fontWeight: 500,
-                  color: '#25252a',
+                  lineHeight: 1.4,
+                  padding: '10px 14px',
+                  borderRadius: 8,
                 },
               }}
             >
-              Ocean Insurance
-            </Button>
+              <Button
+                variant="subtle"
+                color="gray"
+                leftSection={<IconBriefcase size={16} />}
+                rightSection={<IconChevronDown size={12} />}
+                styles={{
+                  root: {
+                    height: 34,
+                    paddingLeft: 6,
+                    paddingRight: 6,
+                  },
+                  label: {
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#25252a',
+                  },
+                }}
+              >
+                All use cases
+              </Button>
+            </Tooltip>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item>Ocean Insurance</Menu.Item>
-            <Menu.Item>Tech Solutions</Menu.Item>
-            <Menu.Item>Retail Corp</Menu.Item>
+            <Menu.Item>All use cases</Menu.Item>
+            <Menu.Item>Sales</Menu.Item>
+            <Menu.Item>Support</Menu.Item>
           </Menu.Dropdown>
         </Menu>
 
@@ -59,6 +78,27 @@ const AppHeader = () => {
         <Text size="sm" fw={500} c="#25252a">
           AI Analyst
         </Text>
+
+        {sessionTitle && (
+          <>
+            <Text size="sm" c="#5d666f">
+              /
+            </Text>
+            <Text
+              size="sm"
+              fw={500}
+              c="#25252a"
+              style={{
+                maxWidth: 160,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {sessionTitle}
+            </Text>
+          </>
+        )}
       </Group>
 
       {/* Center - Search */}
@@ -89,7 +129,7 @@ const AppHeader = () => {
       />
 
       {/* Right side - Actions and profile */}
-      <Group gap="xs">
+      <Group gap="xs" style={{ flex: 1, minWidth: 0, justifyContent: 'flex-end' }}>
         <ActionIcon variant="subtle" color="gray" size="lg">
           <IconHeadphones size={14} />
         </ActionIcon>
@@ -140,7 +180,7 @@ const AppHeader = () => {
                 },
               }}
             >
-              P
+              K
             </Avatar>
           </Menu.Target>
           <Menu.Dropdown>

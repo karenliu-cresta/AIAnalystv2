@@ -1,4 +1,6 @@
 import { Box, Stack, UnstyledButton, Text, Collapse } from '@mantine/core';
+import type { ReactNode } from 'react';
+import AppTooltip from './AppTooltip';
 import {
   IconChartLine,
   IconListSearch,
@@ -10,9 +12,11 @@ import {
   IconTool,
   IconChevronDown,
   IconChevronLeft,
+  IconChevronRight,
   IconCircleSquare,
 } from '@tabler/icons-react';
 import { useState } from 'react';
+import crestaLogo from '../assets/cresta-logo.png';
 
 const navSections = [
   {
@@ -39,15 +43,94 @@ const navSections = [
   { id: 'system-config', label: 'System Config', icon: IconTool, items: [] },
 ];
 
-const NavMenu = () => {
+// The collapsed icon rail places its tooltips to the right of each icon since
+// the rail sits on the left edge.
+const NavTooltip = ({ label, children }: { label: string; children: ReactNode }) => (
+  <AppTooltip label={label} position="right">
+    {children}
+  </AppTooltip>
+);
+
+const NavMenu = ({
+  collapsed = false,
+  onToggleCollapse,
+}: {
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+}) => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     insights: true,
   });
   const [activeItem, setActiveItem] = useState('AI Analyst');
+  // Which top-level section is highlighted in the collapsed icon rail.
+  const [activeNavId, setActiveNavId] = useState('insights');
 
   const toggleSection = (id: string) => {
     setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  // Collapsed: an icon-only rail — no logo, no labels, just the section icons.
+  if (collapsed) {
+    return (
+      <Box
+        style={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          // Offset by the (now-hidden) logo height so the icons stay vertically
+          // aligned with where they sit in the expanded nav.
+          padding: '54px 0 14px',
+        }}
+      >
+        <Stack gap={8} style={{ flex: 1, alignItems: 'center' }}>
+          {navSections.map((section) => {
+            const active = section.id === activeNavId;
+            return (
+              <NavTooltip key={section.id} label={section.label}>
+                <UnstyledButton
+                  onClick={() => setActiveNavId(section.id)}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 12,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    backgroundColor: active ? '#fff' : 'transparent',
+                    boxShadow: active ? '0px 4px 9px rgba(0, 0, 0, 0.05)' : 'none',
+                  }}
+                >
+                  {section.icon && (
+                    <section.icon size={18} color={active ? '#25252a' : '#5d666f'} />
+                  )}
+                </UnstyledButton>
+              </NavTooltip>
+            );
+          })}
+        </Stack>
+
+        {/* Expand the nav back to full width. */}
+        <NavTooltip label="Expand navigation">
+          <UnstyledButton
+            onClick={onToggleCollapse}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <IconChevronRight size={18} color="#5d666f" />
+          </UnstyledButton>
+        </NavTooltip>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -57,7 +140,8 @@ const NavMenu = () => {
         flexDirection: 'column',
       }}
     >
-      {/* Logo */}
+      {/* Logo (Figma node 494:5561) — white wordmark + mark, blended to read
+          dark against the light nav background. */}
       <Box
         style={{
           height: 52,
@@ -66,9 +150,16 @@ const NavMenu = () => {
           alignItems: 'center',
         }}
       >
-        <Text size="sm" fw={700} c="#25252a" style={{ letterSpacing: '0.1em' }}>
-          CRESTA
-        </Text>
+        <img
+          src={crestaLogo}
+          alt="Cresta"
+          style={{
+            height: 21,
+            width: 97,
+            objectFit: 'contain',
+            mixBlendMode: 'exclusion',
+          }}
+        />
       </Box>
 
       {/* Navigation Items */}
@@ -158,6 +249,8 @@ const NavMenu = () => {
         }}
       >
         <UnstyledButton
+          onClick={onToggleCollapse}
+          title="Collapse navigation"
           style={{
             padding: '8px',
           }}
